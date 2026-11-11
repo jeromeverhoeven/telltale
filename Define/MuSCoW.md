@@ -41,21 +41,27 @@ Emulates all the IO of a dehu control board. "Board" below means the dehu contro
 | Num | Item | Expansion | MuSCoW | notes |
 |----|----|----|----|----|
 |100|Emulate all board IO | The emulator connects to every input and output of the dehu control board and stands in for the real dehu components | **Must** | |
-|101|BACnet | Emulated values are set and read over BACnet | **Must** | From Nov 10 discussion. BACnet/IP or MS/TP TBD |
+|101|BACnet MS/TP | Emulated values are set and read over BACnet MS/TP (RS-485) | **Must** | Needs an RS-485 interface; baud rate and MAC address TBD |
+|102|BACnet/IP | Emulated values can also be set and read over BACnet/IP (Ethernet) | *Should* | |
 |110|Thermistor | Presents a resistance to the board's thermistor input that matches a set temperature | **Must** | Need thermistor part/curve (e.g. 10k NTC, Beta) and how many inputs |
 |111|I2C temperature/humidity sensor | Acts as the I2C temperature/humidity sensor: answers the board at the sensor's address with set temperature and RH values | **Must** | Need sensor part number and I2C address |
 |112|Refrigerant pressure switch | Presents the pressure switch to the board as open or closed | **Must** | Need contact type (NO/NC) and high/low side count |
-|113|A2L gas sensor | Emulates the A2L refrigerant leak sensor: normal, leak detected, and sensor fault | **Must** | Need sensor part and interface (analog, digital, UART...) |
-|114|Phase detector | Emulates the phase detector: phase OK and phase fault | **Must** | Need detector output type |
-|115|Fan | Emulates the fan: power input, speed input, tachometer output, 10V, and ground reference. Detects when the board powers the fan, measures the speed command, outputs a tach signal that follows the commanded speed, and provides the 10V reference | **Must** | Need speed command type (0-10V/PWM), tach pulses per rev, max RPM, fan count |
-|116|Compressor | Emulates the compressor as a power input: detects when the board energizes the compressor | **Must** | Need compressor output voltage (24VAC? line?) |
-|117|Float switch | Presents the float to the board's float input as open or closed | **Must** | |
-|118|Pump | Detects when the board energizes the pump output | **Must** | Need pump output voltage |
+|113|A2L gas sensor | Presents the A2L refrigerant leak sensor to the board as an open or closed contact (normal / leak detected) | **Must** | NO/NC contact, same as the pressure switch. Need which state means leak |
+|114|Power monitor | Presents the power monitor (phase detector) to the board as an open or closed contact (power OK / power fault) | **Must** | NO/NC contact. Need which state means fault |
+|115|Fan | Emulates the fan's connections to the board: power input, 10V reference, speed input, tachometer output and ground reference (115.1-115.5) | **Must** | Need fan count |
+|115.1|Fan power input | Detects when the board powers the fan. Fan power is 24-277VAC with a neutral reference | **Must** | Line voltage: see 130 |
+|115.2|Fan 10V reference | Provides the 10V signal the fan normally creates, which the board uses to control fan speed | **Must** | |
+|115.3|Fan speed input | Reads the board's speed command, which may be PWM or 0-10V, and reports it as a voltage: the equivalent 0-10V DC value even when the board uses PWM | **Must** | Need PWM frequency range |
+|115.4|Fan tachometer output | Open drain output pulsing one or more times per rotation, following the commanded speed | Could | Not currently used by the board. Pulses per rev settable |
+|115.5|Fan ground reference | Common ground reference for the 10V, speed and tach signals | **Must** | |
+|116|Compressor | Emulates the compressor as a power input only: detects when the board energizes the compressor. Compressor power is 24-277VAC | **Must** | Line voltage: see 130 |
+|117|Float switch | Emulates the float's hall effect sensor: presents the float to the board's float input as open or closed | **Must** | Hall sensor output is usually open-collector/open-drain, not a dry contact. Need supply voltage from the board, output type, and which state means float tripped |
+|118|Pump | Emulates the pump as a power input only: detects when the board energizes the pump. Pump power is 24-277VAC | **Must** | Line voltage: see 130 |
 
 ### Dehu IO Emulator: Proposed (review)
 | Num | Item | Expansion | MuSCoW | notes |
 |----|----|----|----|----|
-|130|Safe power sensing | Power inputs (compressor, fan, pump) are isolated and rated for the board's output voltage | *Should* | Mandatory if any output is line voltage |
+|130|Safe power sensing | Power inputs (compressor, fan, pump) are isolated and rated for the board's output voltage, up to 277VAC | **Must** | Required: fan power is 24-277VAC (115.1) |
 |131|Fault injection | Force faults: open/shorted thermistor, I2C sensor not responding, fan tach lost | *Should* | Tests the board's fault handling |
 |132|Dehu behavior model | Values react like a real dehu, e.g. RH falls while the compressor runs, tach follows speed command | Could | |
 |133|Monitor integration | Emulator points appear in the Telltale monitor and recordings alongside the board's RS-232 variables | Could | One recording shows stimulus and board response |
@@ -66,3 +72,4 @@ Emulates all the IO of a dehu control board. "Board" below means the dehu contro
 |----|----|----|----|----|
 |80|Automated test sequences | Scripted pass/fail tests of a board | `Wont` | Future phase, enabled by 8 |
 |81|User accounts | Logins and per-user settings | `Wont` | Not needed for bench use |
+|82|BACnet Secure Connect | BACnet/SC (secure, TLS-based) | `Wont` | Not yet |
