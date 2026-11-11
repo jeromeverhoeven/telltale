@@ -57,10 +57,6 @@ Emulates all the IO of a dehu control board. "Board" below means the dehu contro
 |116|Compressor | Emulates the compressor as a power input only: detects when the board energizes the compressor. Compressor power is 24-277VAC | **Must** | Line voltage: see 130 |
 |117|Float switch | Emulates the float's hall effect sensor: presents the float to the board's float input as open or closed | **Must** | Hall sensor output is usually open-collector/open-drain, not a dry contact. Need supply voltage from the board, output type, and which state means float tripped |
 |118|Pump | Emulates the pump as a power input only: detects when the board energizes the pump. Pump power is 24-277VAC | **Must** | Line voltage: see 130 |
-
-### Dehu IO Emulator: Proposed (review)
-| Num | Item | Expansion | MuSCoW | notes |
-|----|----|----|----|----|
 |130|Safe power sensing | Power inputs (compressor, fan, pump) are isolated and rated for the board's output voltage, up to 277VAC | **Must** | Required: fan power is 24-277VAC (115.1) |
 |131|Fault injection | Force faults: open/shorted thermistor, I2C sensor not responding, fan tach lost | *Should* | Tests the board's fault handling |
 |132|Dehu behavior model | Values react like a real dehu, e.g. RH falls while the compressor runs, tach follows speed command | Could | |
