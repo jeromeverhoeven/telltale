@@ -1,7 +1,7 @@
-# 0xd
-Define-Design-Develop-Destroy-Deploy
+# Telltale
+Test and monitor embedded electronics. Two parts: a monitor that reads the RS-232 stream from Wellington style products, shows every board variable live and records sessions to .csv/.xlsx; and a dehu IO emulator that stands in for every input and output of a dehu control board, controlled over BACnet.
 
-Structure of repository for product development
+Organized with the 5D structure: Define-Design-Develop-Destroy-Deploy
 
 # Define:  The definition of the product
 | Deliverable | Description | Owner |
